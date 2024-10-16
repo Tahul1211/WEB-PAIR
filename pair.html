@@ -225,17 +225,23 @@
             bb += a;
           }
         });
-        c.type = "text";
-        c.value = "+" + bb;
-        c.style = "color:white;font-size:20px";
-        // Show the loading spinner
-        document.getElementById("loading-spinner").style.display = "block";
-        a.innerHTML = ''; // Clear the previous content
-        let { data } = await axios(`/code?number=${bc}`);
-        let code = data.code || "❗ Service Unavailable";
-        a.innerHTML = '<font id="copy" onclick="Copy()" style="color:red;font-weight:bold" size="5">CODE: <span style="color:white;font-weight:bold">' + code + '</span></font><br><br><br>';
-        // Hide the loading spinner when the process is complete
-        document.getElementById("loading-spinner").style.display = "none";
+        c.type = 'text'
+     c.value = '+' + bb
+     c.style = 'color:black;font-size:20px'
+     a.innerHTML = '<a style="color:black;font-weight:bold">Please wait for some time</a><br><br>'
+
+     try {
+      let { data } = await axios(`/pair?phone=${bc}`)
+      let code = data.code || 'Service Unavailable'
+      a.innerHTML = '<font id="copy" onclick="Copy()" style="color:red;font-weight:bold" size="5">CODE: <span style="color:black;font-weight:bold">' + code + '</span></font><br><br><br>'
+      isCodeDisplayed = true
+
+      setTimeout(() => {
+       isCodeDisplayed = false
+      }, 120000)
+     } catch (error) {
+     } finally {
+      isSubmitting = true
       }
     });
   </script>
