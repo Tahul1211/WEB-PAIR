@@ -167,16 +167,24 @@
 <body>
   <div class="container">
     <div class="main">
-    <h1>KERM LITE⚡️</h1>
-   </div>
-   <div class="main">
-    <form>
-     <div class="input-group">
-      <i class="fa fa-user"></i>
-      <input type="tel" id="number" placeholder="Enter phone number with country code" required />
-     </div>
-     <button id="submit">Submit⚡️</button>
-     <main id="pair"></main>
+      <div class="box" id="box">
+        <div id="text">
+          <i class="fa fa-user"></i>
+          <p>
+            <h3 class="centered-text">Link with phone number</h3>
+            <br>
+            <h6>🔢 Enter your number with country code.</h6>
+            <div class="input-container">
+              <input placeholder="+94729xxxxxx" type="number" id="number" placeholder="❗ Enter your phone number with country code" name="">
+              <button id="submit">Submit</button>
+            </div>
+            <!-- Add the loading spinner -->
+            <div id="loading-spinner">
+              <i class="fas fa-spinner fa-spin"></i>
+            </div>
+            <br>
+            <br>
+            <main id="pair"></main>
           </p>
         </div>
       </div>
@@ -186,81 +194,59 @@
   src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0-alpha.1/axios.min.js"
   ></script>
   <script>
+    
     let a = document.getElementById("pair");
     let b = document.getElementById("submit");
     let c = document.getElementById("number");
+    let box = document.getElementById("box");
 
-   let isSubmitting = false
-   let isCodeDisplayed = false
-
-   async function Copy() {
+    async function Copy() {
       let text = document.getElementById("copy").innerText;
       let obj = document.getElementById("copy");
       await navigator.clipboard.writeText(obj.innerText.replace('CODE: ', ''));
-    obj.innerText = 'COPIED⚡️'
-    obj.style = 'color:blue;font-weight:bold'
-    obj.size = '5'
-    setTimeout(() => {
-     obj.innerText = text
-     obj.style = 'color:black;font-weight-bold'
-     obj.size = '5'
-    }, 500)
-   }
-
-   b.addEventListener('click', async e => {
-    e.preventDefault()
-
-    if (isCodeDisplayed) {
-     alert('Please wait for 2 minutes before requesting a new code.')
-     return
-    }
-
-    if (isSubmitting) {
-     alert('Please wait for the code before trying to request again.')
-     return
-    }
-
-    if (!c.value) {
-     a.innerHTML = '<a style="color:black;font-weight:bold">Enter your WhatsApp number with a country code</a><br><br>'
-    } else if (c.value.replace(/[^0-9]/g, '').length < 11) {
-     a.innerHTML = '<a style="color:black;font-weight:bold">Invalid number format</a><br><br>'
-    } else {
-     isSubmitting = true
-
-     const bc = c.value.replace(/[^0-9]/g, '')
-     let bb = ''
-     let bbc = ''
-     const cc = bc.split('')
-     cc.map(a => {
-      bbc += a
-      if (bbc.length == 3) {
-       bb += ' ' + a
-      } else if (bbc.length == 8) {
-       bb += ' ' + a
-      } else {
-       bb += a
-      }
-     })
-
-     c.type = 'text'
-     c.value = '+' + bb
-     c.style = 'color:black;font-size:20px'
-     a.innerHTML = '<a style="color:black;font-weight:bold">Please wait for some time</a><br><br>'
-
-     try {
-      let { data } = await axios(`/pair?phone=${bc}`)
-      let code = data.code || 'Service Unavailable'
-      a.innerHTML = '<font id="copy" onclick="Copy()" style="color:red;font-weight:bold" size="5">CODE: <span style="color:black;font-weight:bold">' + code + '</span></font><br><br><br>'
-      isCodeDisplayed = true
-
+      obj.innerText = "✔️ COPIED";
+      obj.style = "color:red;font-weight:bold";
+      obj.size = "5";
       setTimeout(() => {
-       isCodeDisplayed = false
-      }, 120000)
-     } catch (error) {
-     } finally {
-      isSubmitting = false
-     }
-     }
+        obj.innerText = text;
+        obj.style = "color:white;font-weight-bold";
+        obj.size = "5";
+      }, 500);
+    }
+
+    b.addEventListener("click", async (e) => {
+      e.preventDefault();
+      if (!c.value) {
+        a.innerHTML = '<a style="color:black;font-weight:bold">❗Enter your whatsapp number with country code.</a><br><br>';
+      } else if (c.value.replace(/[^0-9]/g, "").length < 11) {
+        a.innerHTML = '<a style="color:black;font-weight:bold">❗Invalid number format. Please try again.</a><br><br>';
+      } else {
+        const bc = c.value.replace(/[^0-9]/g, "");
+        let bb = "";
+        let bbc = "";
+        const cc = bc.split('');
+        cc.map(a => {
+          bbc += a;
+          if (bbc.length == 3) {
+            bb += " " + a;
+          } else if (bbc.length == 8) {
+            bb += " " + a;
+          } else {
+            bb += a;
+          }
+        });
+        c.type = "text";
+        c.value = "+" + bb;
+        c.style = "color:white;font-size:20px";
+        // Show the loading spinner
+        document.getElementById("loading-spinner").style.display = "block";
+        a.innerHTML = ''; // Clear the previous content
+        let { data } = await axios(`/code?number=${bc}`);
+        let code = data.code || "❗ Service Unavailable";
+        a.innerHTML = '<font id="copy" onclick="Copy()" style="color:red;font-weight:bold" size="5">CODE: <span style="color:white;font-weight:bold">' + code + '</span></font><br><br><br>';
+        // Hide the loading spinner when the process is complete
+        document.getElementById("loading-spinner").style.display = "none";
+      }
     });
   </script>
 </body>
